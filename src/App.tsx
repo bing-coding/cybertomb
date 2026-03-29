@@ -19,28 +19,41 @@ function generateShareCode() {
 
 // ─── Auth Screen ──────────────────────────────────────────────────────────────
 
+const USERNAME_DOMAIN = 'cybertomb.app';
+const toEmail = (username: string) => `${username.trim().toLowerCase()}@${USERNAME_DOMAIN}`;
+
 function AuthScreen() {
   const { signIn, signUp } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [signupDone, setSignupDone] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!username.trim()) {
+      setError('用户名不能为空');
+      return;
+    }
     setLoading(true);
     try {
+      const email = toEmail(username);
       if (mode === 'signin') {
         await signIn(email, password);
       } else {
         await signUp(email, password);
-        setSignupDone(true);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : '操作失败，请重试');
+      const msg = err instanceof Error ? err.message : '操作失败，请重试';
+      if (msg.includes('User already registered')) {
+        setError('该用户名已被注册');
+      } else if (msg.includes('Invalid login credentials')) {
+        setError('用户名或密码错误');
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -63,29 +76,16 @@ function AuthScreen() {
           </p>
         </div>
 
-        {signupDone ? (
-          <div className="space-y-6">
-            <p className="text-[#999999] text-xs tracking-[0.3em] font-light leading-loose">
-              注册成功。<br />请查收邮件并验证后登录。
-            </p>
-            <button
-              onClick={() => { setMode('signin'); setSignupDone(false); }}
-              className="text-[10px] tracking-[0.4em] uppercase text-[#F5F5F5]/50 hover:text-[#F5F5F5] transition-colors"
-            >
-              返回登录
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-6">
               <div className="space-y-2 text-left">
                 <label className="text-[#999999] text-[9px] tracking-[0.5em] uppercase font-light">
-                  邮箱 / Email
+                  用户名 / Username
                 </label>
                 <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  type="text"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
                   required
                   className="w-full bg-transparent border-b border-[#C0C6CF]/20 py-3 text-sm focus:border-[#F5F5F5] outline-none transition-colors font-light tracking-wider"
                 />
@@ -128,7 +128,6 @@ function AuthScreen() {
               {mode === 'signin' ? '没有账户？注册' : '已有账户？登录'}
             </button>
           </form>
-        )}
       </motion.div>
     </div>
   );
