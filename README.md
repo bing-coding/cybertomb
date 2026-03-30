@@ -52,7 +52,7 @@
 ### 1. 克隆仓库
 
 ```bash
-git clone https://github.com/binggege-coder/cybertomb.git
+git clone https://github.com/bing-coding/cybertomb.git
 cd cybertomb
 npm install
 ```
@@ -162,4 +162,4 @@ supabase/
 
 ## License
 
-MIT © 2026 归处 · The Return
+MIT © 2026 [bing-coding](https://github.com/bing-coding) · 归处 The Return
