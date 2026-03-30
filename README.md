@@ -11,9 +11,19 @@
 
 ## 简介
 
-**归处**是一款面向个人与家庭纪念场景的数字纪念馆。用户可以为逝去的人（或宠物）创建一座专属数字墓碑，记录姓名、生卒年月、墓志铭与影像，并通过烛光留言与私密分享，让思念以更现代、更克制的方式延续。
+**归处**是一款面向个人与家庭纪念场景的数字纪念馆。用户可以为逝去的人（或宠物）创建一座专属数字墓碑，记录姓名、生卒年月、墓志铭与影像，并通过烛光留言与私密分享。
 
-不同于强调信息堆叠的传统纪念类页面，归处更强调**情绪氛围、审美表达与仪式感**——深色背景、留白、呼吸动效、逐字渐入，让每一次访问都成为一场安静的告别。
+（当然你也可以“祭奠”点别的……）
+
+（或者给自己建一个电子墓碑邀请朋友来欣赏你的墓志铭……）
+
+---
+
+## 截图 / Screenshots
+
+| 电子墓园首页 | 纪念详情页 | 建立纪念 |
+|:-----------:|:---------:|:-------:|
+| ![首页](docs/screenshots/index.png) | ![详情页](docs/screenshots/detail.png) | ![建立纪念](docs/screenshots/create.png) |
 
 ---
 
@@ -42,82 +52,6 @@
 
 ---
 
-## 本地运行
-
-### 前置条件
-
-- Node.js 18+
-- 一个 [Supabase](https://supabase.com) 项目
-
-### 1. 克隆仓库
-
-```bash
-git clone https://github.com/bing-coding/cybertomb.git
-cd cybertomb
-npm install
-```
-
-### 2. 配置环境变量
-
-```bash
-cp .env.example .env
-```
-
-编辑 `.env`，填入你的 Supabase 项目信息：
-
-```env
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key_here
-```
-
-### 3. 初始化数据库
-
-在 Supabase 控制台 → SQL Editor 中执行 `supabase/migrations/001_schema_updates.sql`。
-
-执行完成后，还需在 **Authentication → Policies** 中确认以下 RLS 策略存在：
-
-```sql
--- 允许墓主删除自己墓碑上的留言
-CREATE POLICY "Tomb owners can delete messages" ON public.messages
-  FOR DELETE
-  USING (
-    auth.uid() = (SELECT user_id FROM public.tombstones WHERE id = tomb_id)
-  );
-
--- 通过访问码查询墓碑（替代直接扫表）
-CREATE OR REPLACE FUNCTION public.get_tomb_by_share_code(p_code TEXT)
-RETURNS SETOF public.tombstones
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
-AS $$
-BEGIN
-  RETURN QUERY SELECT * FROM public.tombstones WHERE share_code = p_code;
-END;
-$$;
-
-GRANT EXECUTE ON FUNCTION public.get_tomb_by_share_code TO anon;
-GRANT EXECUTE ON FUNCTION public.get_tomb_by_share_code TO authenticated;
-```
-
-### 4. 启动开发服务器
-
-```bash
-npm run dev
-```
-
-访问 [http://localhost:3000](http://localhost:3000)
-
----
-
-## 部署到 Vercel
-
-1. 将仓库推送至 GitHub
-2. 在 Vercel 控制台导入项目
-3. 在 **Settings → Environment Variables** 中添加：
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-4. 部署
-
----
 
 ## 项目结构
 
@@ -152,14 +86,19 @@ supabase/
 
 ## 路线图
 
-- [ ] AI 辅助生成墓志铭
 - [ ] 多人共建纪念空间（家庭模式）
 - [ ] 纪念日提醒
 - [ ] 逝者人生时间轴
 - [ ] 移动端体验优化
+- [ ] 存储空间优化
+- [ ] ......
 
 ---
 
-## License
+## 声明
 
-MIT © 2026 [bing-coding](https://github.com/bing-coding) · 归处 The Return
+本项目主体代码由Google AI Studio + Cursor生成（包括这个README的大部分^^）
+
+更多功能开发完善中……
+
+欢迎提建议和issue~
