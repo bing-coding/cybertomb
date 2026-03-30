@@ -1,0 +1,10 @@
+name = "cybertomb"
+compatibility_date = "2025-09-27"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+
+[vars]
+VITE_SUPABASE_URL = "https://kbgmudxdgpcxegzdsnxy.supabase.co"
+VITE_SUPABASE_ANON_KEY = "sb_publishable_Ik2mjpSPIc_21s3eNVezjA_beyVRqv0"
