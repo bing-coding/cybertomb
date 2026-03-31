@@ -1,6 +1,6 @@
 # 归处 · The Return
 
-> 一处安静、私密、克制的数字纪念空间，让记忆得以安放。
+> 一个赛博墓地。
 
 ![归处首页](https://img.shields.io/badge/归处-Digital%20Memorial-1a1828?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)
